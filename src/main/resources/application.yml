@@ -1,18 +1,18 @@
 server:
-  port: ${APP_PORT:8092}
+  port: ${APP_PORT}
 spring:
   application:
     name: baef-p2-store
   datasource:
-    url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_NAME:baef_store}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: ${DB_USER:root}
-    password: ${DB_PASSWORD:}
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      maximum-pool-size: ${DB_POOL_MAX:10}
-      connection-timeout: ${DB_CONNECTION_TIMEOUT_MS:30000}
+      maximum-pool-size: ${DB_POOL_MAX}
+      connection-timeout: ${DB_CONNECTION_TIMEOUT_MS}
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     producer:
       acks: all
       properties:
@@ -46,7 +46,7 @@ management:
 
 security:
   internal:
-    api-key: ${INTERNAL_API_KEY:}
+    api-key: ${INTERNAL_API_KEY}
 
 logging:
   pattern:
