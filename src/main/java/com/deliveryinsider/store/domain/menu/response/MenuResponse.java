@@ -13,6 +13,7 @@ public record MenuResponse(
         Integer packagingFee,
         Integer expectedCookingTime,
         Integer batchCapacity,
+        String menuStatus,
         Integer expectedMargin,
         BigDecimal expectedMarginRate,
         LocalDateTime createdAt,

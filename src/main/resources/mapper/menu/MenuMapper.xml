@@ -14,6 +14,7 @@
         <result column="packaging_fee" property="packagingFee" />
         <result column="expected_cooking_time" property="expectedCookingTime" />
         <result column="batch_capacity" property="batchCapacity" />
+        <result column="menu_status" property="menuStatus" />
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
         <result column="deleted_at" property="deletedAt" />
@@ -35,7 +36,10 @@
             menu_cost,
             packaging_fee,
             expected_cooking_time,
-            batch_capacity
+            batch_capacity,
+            menu_status,   <!-- 추가됨 -->
+            created_at,    <!-- 추가됨 -->
+            updated_at     <!-- 추가됨 -->
         ) VALUES (
             #{storeId},
             #{menuName},
@@ -43,7 +47,10 @@
             #{menuCost},
             #{packagingFee},
             #{expectedCookingTime},
-            #{batchCapacity}
+            #{batchCapacity},
+            #{menuStatus}, <!-- 추가됨 -->
+            NOW(),         <!-- 추가됨 -->
+            NOW()          <!-- 추가됨 -->
         )
     </insert>
 
@@ -99,16 +106,21 @@
             store_id,
             menu_id,
             dismissed_at,
-            hide_until
+            hide_until,
+            created_at,
+            updated_at
         ) VALUES (
             #{storeId},
             #{menuId},
             NOW(),
-            #{hideUntil}
+            #{hideUntil},
+            NOW(),
+            NOW()
         )
         ON DUPLICATE KEY UPDATE
             hide_until = VALUES(hide_until),
-            dismissed_at = NOW()
+            dismissed_at = NOW(),
+            updated_at = NOW()
     </insert>
 
     <select id="findLossDismissalByStoreIdAndMenuId" resultMap="menuLossDismissalResultMap">

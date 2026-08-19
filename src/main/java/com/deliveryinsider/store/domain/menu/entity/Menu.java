@@ -37,6 +37,8 @@ public class Menu {
     // 한 번에 조리 가능한 수량
     private Integer batchCapacity;
 
+    private String menuStatus;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;

@@ -38,6 +38,7 @@ public class MenuService {
                 .packagingFee(createReq.packagingFee())
                 .expectedCookingTime(createReq.expectedCookingTime())
                 .batchCapacity(createReq.batchCapacity())
+                .menuStatus("ACTIVE")
                 .build();
 
         int result = menuMapper.save(menu);
@@ -96,6 +97,7 @@ public class MenuService {
                 .packagingFee(updateReq.packagingFee())
                 .expectedCookingTime(updateReq.expectedCookingTime())
                 .batchCapacity(updateReq.batchCapacity())
+                .menuStatus(currentMenu.getMenuStatus())
                 .build();
 
         int result = menuMapper.update(updateMenu);
@@ -203,6 +205,7 @@ public class MenuService {
                 .packagingFee(menu.getPackagingFee())
                 .expectedCookingTime(menu.getExpectedCookingTime())
                 .batchCapacity(menu.getBatchCapacity())
+                .menuStatus(menu.getMenuStatus())
                 .expectedMargin(expectedMargin)
                 .expectedMarginRate(expectedMarginRate)
                 .createdAt(menu.getCreatedAt())
