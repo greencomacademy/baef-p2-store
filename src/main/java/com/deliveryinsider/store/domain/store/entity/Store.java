@@ -20,8 +20,8 @@ public class Store {
     private Long userId;
     private String storeName;
     private String phone;
-    private String businessNumber;
-    private BusinessStatus businessStatus;
+    private String businessRegistrationNumber;
+    private String businessVerificationId;
     private String address;
     private String addressDetail;
     private String industryType;

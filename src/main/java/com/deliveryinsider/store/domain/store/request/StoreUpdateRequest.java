@@ -18,14 +18,7 @@ public record StoreUpdateRequest(
         @Size(max = 20, message = "전화번호는 20자 이하여야 합니다.")
         String phone,
 
-        @Size(max = 20, message = "사업자상태는 최대 20자입니다.")
-        String businessStatus,
 
-        @Pattern(
-                regexp = "^\\d{10}$",
-                message = "사업자등록번호는 하이픈 없이 숫자 10자리여야 합니다."
-        )
-        String businessNumber,
 
         @Size(max = 255, message = "주소는 255자 이하여야 합니다.")
         @Pattern(
@@ -62,7 +55,6 @@ public record StoreUpdateRequest(
     public boolean isUpdateFieldPresent() {
         return storeName != null
                 || phone != null
-                || businessNumber != null
                 || address != null
                 || addressDetail != null
                 || industryType != null
@@ -70,7 +62,6 @@ public record StoreUpdateRequest(
                 || minimumOrderAmount != null
                 || openTime != null
                 || closeTime != null
-                || businessStatus != null
                 || operationStatus != null ;
     }
 }
