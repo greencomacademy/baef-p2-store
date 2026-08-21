@@ -26,6 +26,7 @@
         <result column="menu_id" property="menuId" />
         <result column="dismissed_at" property="dismissedAt" />
         <result column="hide_until" property="hideUntil" />
+        <result column="restored_at" property="restoredAt" />
     </resultMap>
 
     <insert id="save" parameterType="com.deliveryinsider.store.domain.menu.entity.Menu" useGeneratedKeys="true" keyProperty="id">
@@ -37,9 +38,9 @@
             packaging_fee,
             expected_cooking_time,
             batch_capacity,
-            menu_status,   <!-- 추가됨 -->
-            created_at,    <!-- 추가됨 -->
-            updated_at     <!-- 추가됨 -->
+            menu_status,
+            created_at,
+            updated_at
         ) VALUES (
             #{storeId},
             #{menuName},
@@ -48,14 +49,17 @@
             #{packagingFee},
             #{expectedCookingTime},
             #{batchCapacity},
-            #{menuStatus}, <!-- 추가됨 -->
-            NOW(),         <!-- 추가됨 -->
-            NOW()          <!-- 추가됨 -->
+            #{menuStatus},
+            NOW(),
+            NOW()
         )
     </insert>
 
     <select id="findByIdAndStoreId" resultMap="menuResultMap">
-        SELECT *
+        SELECT 
+            id, store_id, menu_name, menu_price, menu_cost, 
+            packaging_fee, expected_cooking_time, batch_capacity, 
+            menu_status, created_at, updated_at, deleted_at
         FROM menus
         WHERE id = #{id}
           AND store_id = #{storeId}
@@ -63,7 +67,10 @@
     </select>
 
     <select id="findAllByStoreId" resultMap="menuResultMap">
-        SELECT *
+        SELECT 
+            id, store_id, menu_name, menu_price, menu_cost, 
+            packaging_fee, expected_cooking_time, batch_capacity, 
+            menu_status, created_at, updated_at, deleted_at
         FROM menus
         WHERE store_id = #{storeId}
           AND deleted_at IS NULL
@@ -78,6 +85,7 @@
             <if test="packagingFee != null">packaging_fee = #{packagingFee},</if>
             <if test="expectedCookingTime != null">expected_cooking_time = #{expectedCookingTime},</if>
             <if test="batchCapacity != null">batch_capacity = #{batchCapacity},</if>
+            <if test="menuStatus != null">menu_status = #{menuStatus},</if>
             updated_at = NOW()
         </set>
         WHERE id = #{id}
@@ -95,10 +103,12 @@
     </update>
 
     <select id="findActiveLossDismissalsByStoreId" resultMap="menuLossDismissalResultMap">
-        SELECT *
+        SELECT 
+            id, store_id, menu_id, dismissed_at, hide_until, restored_at
         FROM menu_loss_dismissals
         WHERE store_id = #{storeId}
           AND hide_until > NOW()
+          AND restored_at IS NULL
     </select>
 
     <insert id="upsertLossDismissal" parameterType="com.deliveryinsider.store.domain.menu.entity.MenuLossDismissal">
@@ -106,34 +116,32 @@
             store_id,
             menu_id,
             dismissed_at,
-            hide_until,
-            created_at,
-            updated_at
+            hide_until
         ) VALUES (
             #{storeId},
             #{menuId},
             NOW(),
-            #{hideUntil},
-            NOW(),
-            NOW()
+            #{hideUntil}
         )
         ON DUPLICATE KEY UPDATE
             hide_until = VALUES(hide_until),
             dismissed_at = NOW(),
-            updated_at = NOW()
+            restored_at = NULL
     </insert>
 
     <select id="findLossDismissalByStoreIdAndMenuId" resultMap="menuLossDismissalResultMap">
-        SELECT *
+        SELECT 
+            id, store_id, menu_id, dismissed_at, hide_until, restored_at
         FROM menu_loss_dismissals
         WHERE store_id = #{storeId}
           AND menu_id = #{menuId}
     </select>
 
-    <delete id="restoreLossDismissal">
-        DELETE FROM menu_loss_dismissals
+    <update id="restoreLossDismissal">
+        UPDATE menu_loss_dismissals
+        SET restored_at = NOW()
         WHERE store_id = #{storeId}
           AND menu_id = #{menuId}
-    </delete>
+    </update>
 
 </mapper>

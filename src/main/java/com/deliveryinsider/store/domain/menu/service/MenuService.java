@@ -2,6 +2,7 @@ package com.deliveryinsider.store.domain.menu.service;
 
 import com.deliveryinsider.store.domain.menu.entity.Menu;
 import com.deliveryinsider.store.domain.menu.entity.MenuLossDismissal;
+import com.deliveryinsider.store.domain.menu.enums.MenuStatus;
 import com.deliveryinsider.store.domain.menu.mapper.MenuMapper;
 import com.deliveryinsider.store.domain.menu.request.MenuCreateRequest;
 import com.deliveryinsider.store.domain.menu.request.MenuLossDismissRequest;
@@ -10,14 +11,15 @@ import com.deliveryinsider.store.domain.menu.response.MenuResponse;
 import com.deliveryinsider.store.domain.menu.response.MenuLossDismissalResponse;
 import com.deliveryinsider.store.domain.store.entity.Store;
 import com.deliveryinsider.store.domain.store.mapper.StoreMapper;
+import com.deliveryinsider.store.global.error.BusinessException;
+import com.deliveryinsider.store.global.error.StoreErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +40,7 @@ public class MenuService {
                 .packagingFee(createReq.packagingFee())
                 .expectedCookingTime(createReq.expectedCookingTime())
                 .batchCapacity(createReq.batchCapacity())
-                .menuStatus("ACTIVE")
+                .menuStatus(MenuStatus.ACTIVE)
                 .build();
 
         int result = menuMapper.save(menu);
@@ -70,11 +72,8 @@ public class MenuService {
     public MenuResponse findOne(Long userId, Long menuId) {
         Store store = getActiveStore(userId);
 
-        Menu menu = menuMapper.findByIdAndStoreId(menuId, store.getId());
-
-        if (menu == null) {
-            throw new RuntimeException("메뉴를 찾을 수 없습니다.");
-        }
+        Menu menu = Optional.ofNullable(menuMapper.findByIdAndStoreId(menuId, store.getId()))
+            .orElseThrow(() -> new BusinessException(StoreErrorCode.MENU_NOT_FOUND));
 
         return toMenuResponse(menu);
     }
@@ -82,11 +81,9 @@ public class MenuService {
     @Transactional(rollbackFor = Exception.class)
     public MenuResponse update(Long userId, Long menuId, MenuUpdateRequest updateReq) {
         Store store = getActiveStore(userId);
-        Menu currentMenu = menuMapper.findByIdAndStoreId(menuId, store.getId());
 
-        if (currentMenu == null) {
-            throw new RuntimeException("수정할 메뉴를 찾을 수 없습니다.");
-        }
+        Menu currentMenu = Optional.ofNullable(menuMapper.findByIdAndStoreId(menuId, store.getId()))
+            .orElseThrow(() -> new BusinessException(StoreErrorCode.MENU_NOT_FOUND));
 
         Menu updateMenu = Menu.builder()
                 .id(currentMenu.getId())
@@ -97,13 +94,13 @@ public class MenuService {
                 .packagingFee(updateReq.packagingFee())
                 .expectedCookingTime(updateReq.expectedCookingTime())
                 .batchCapacity(updateReq.batchCapacity())
-                .menuStatus(currentMenu.getMenuStatus())
+                .menuStatus(updateReq.menuStatus() != null ? updateReq.menuStatus() : currentMenu.getMenuStatus())
                 .build();
 
         int result = menuMapper.update(updateMenu);
 
         if (result != 1) {
-            throw new RuntimeException("메뉴 수정 중 문제가 발생했습니다.");
+            throw new BusinessException(StoreErrorCode.MENU_NOT_FOUND);
         }
 
         menuMapper.restoreLossDismissal(store.getId(), menuId);
@@ -123,7 +120,7 @@ public class MenuService {
         int result = menuMapper.softDelete(menuId, store.getId());
 
         if (result != 1) {
-            throw new RuntimeException("삭제할 메뉴를 찾을 수 없습니다.");
+            throw new BusinessException(StoreErrorCode.MENU_NOT_FOUND);
         }
     }
 
@@ -140,11 +137,9 @@ public class MenuService {
     @Transactional(rollbackFor = Exception.class)
     public MenuLossDismissalResponse dismissLossMenu(Long userId, Long menuId, MenuLossDismissRequest dismissReq) {
         Store store = getActiveStore(userId);
-        Menu menu = menuMapper.findByIdAndStoreId(menuId, store.getId());
 
-        if (menu == null) {
-            throw new RuntimeException("확인 완료 처리할 메뉴를 찾을 수 없습니다.");
-        }
+        Menu menu = Optional.ofNullable(menuMapper.findByIdAndStoreId(menuId, store.getId()))
+            .orElseThrow(() -> new BusinessException(StoreErrorCode.MENU_NOT_FOUND));
 
         int hideDays = (dismissReq != null && dismissReq.hideDays() != null) ? dismissReq.hideDays() : 7;
         LocalDateTime hideUntil = LocalDateTime.now().plusDays(hideDays);
@@ -168,35 +163,19 @@ public class MenuService {
     @Transactional(rollbackFor = Exception.class)
     public void restoreLossMenu(Long userId, Long menuId) {
         Store store = getActiveStore(userId);
-        Menu menu = menuMapper.findByIdAndStoreId(menuId, store.getId());
 
-        if (menu == null) {
-            throw new RuntimeException("다시 표시할 메뉴를 찾을 수 없습니다.");
-        }
+        Menu menu = Optional.ofNullable(menuMapper.findByIdAndStoreId(menuId, store.getId()))
+            .orElseThrow(() -> new BusinessException(StoreErrorCode.MENU_NOT_FOUND));
 
         menuMapper.restoreLossDismissal(store.getId(), menuId);
     }
 
     private Store getActiveStore(Long userId) {
-        Store store = storeMapper.findByUserId(userId);
-        if (store == null) {
-            throw new RuntimeException("등록된 활성 매장이 없습니다.");
-        }
-        return store;
+        return Optional.ofNullable(storeMapper.findByUserId(userId))
+            .orElseThrow(() -> new BusinessException(StoreErrorCode.STORE_NOT_FOUND));
     }
 
     private MenuResponse toMenuResponse(Menu menu) {
-        int expectedMargin = menu.getMenuPrice() - menu.getMenuCost() - menu.getPackagingFee();
-        BigDecimal expectedMarginRate;
-
-        if (menu.getMenuPrice() == 0) {
-            expectedMarginRate = BigDecimal.ZERO;
-        } else {
-            expectedMarginRate = BigDecimal.valueOf(expectedMargin)
-                    .multiply(BigDecimal.valueOf(100))
-                    .divide(BigDecimal.valueOf(menu.getMenuPrice()), 2, RoundingMode.HALF_UP);
-        }
-
         return MenuResponse.builder()
                 .id(menu.getId())
                 .menuName(menu.getMenuName())
@@ -206,8 +185,6 @@ public class MenuService {
                 .expectedCookingTime(menu.getExpectedCookingTime())
                 .batchCapacity(menu.getBatchCapacity())
                 .menuStatus(menu.getMenuStatus())
-                .expectedMargin(expectedMargin)
-                .expectedMarginRate(expectedMarginRate)
                 .createdAt(menu.getCreatedAt())
                 .updatedAt(menu.getUpdatedAt())
                 .build();
