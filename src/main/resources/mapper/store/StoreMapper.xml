@@ -9,7 +9,8 @@
         <id column="id" property="id" />
         <result column="user_id" property="userId" />
         <result column="store_name" property="storeName" />
-        <result column="businessRegistrationNumber" property="businessRegistrationNumber" />
+        <result column="business_registration_number" property="businessRegistrationNumber" />
+        <result column="business_verification_id" property="businessVerificationId" />
         <result column="phone" property="phone" />
         <result column="operation_status" property="operationStatus" />
         <result column="address" property="address" />
@@ -25,9 +26,7 @@
     </resultMap>
 
     <!-- 로그인한 유저의 활성 매장 조회 -->
-    <select id="findByUserId"
-            resultType="com.deliveryinsider.store.domain.store.entity.Store">
-
+    <select id="findByUserId" resultMap="storeResultMap">
         SELECT
         id,
         user_id,
@@ -49,45 +48,22 @@
         FROM stores
         WHERE user_id = #{userId}
         AND deleted_at IS NULL
-
     </select>
 
     <!-- 매장 부분 수정 -->
-    <update id="update"
-            parameterType="com.deliveryinsider.store.domain.store.entity.Store">
-
+    <update id="update" parameterType="com.deliveryinsider.store.domain.store.entity.Store">
         UPDATE stores
         <set>
-            <if test="storeName != null">
-                store_name = #{storeName},
-            </if>
-            <if test="phone != null">
-                phone = #{phone},
-            </if>
-            <if test="operationStatus != null">
-                operation_status = #{operationStatus},
-            </if>
-            <if test="address != null">
-                address = #{address},
-            </if>
-            <if test="addressDetail != null">
-                address_detail = #{addressDetail},
-            </if>
-            <if test="industryType != null">
-                industry_type = #{industryType},
-            </if>
-            <if test="kitchenCapacity != null">
-                kitchen_capacity = #{kitchenCapacity},
-            </if>
-            <if test="minimumOrderAmount != null">
-                minimum_order_amount = #{minimumOrderAmount},
-            </if>
-            <if test="openTime != null">
-                open_time = #{openTime},
-            </if>
-            <if test="closeTime != null">
-                close_time = #{closeTime},
-            </if>
+            <if test="storeName != null">store_name = #{storeName},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="operationStatus != null">operation_status = #{operationStatus},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="addressDetail != null">address_detail = #{addressDetail},</if>
+            <if test="industryType != null">industry_type = #{industryType},</if>
+            <if test="kitchenCapacity != null">kitchen_capacity = #{kitchenCapacity},</if>
+            <if test="minimumOrderAmount != null">minimum_order_amount = #{minimumOrderAmount},</if>
+            <if test="openTime != null">open_time = #{openTime},</if>
+            <if test="closeTime != null">close_time = #{closeTime},</if>
             updated_at = NOW()
         </set>
         WHERE id = #{id}
