@@ -4,9 +4,13 @@ import com.deliveryinsider.store.domain.store.entity.Store;
 import com.deliveryinsider.store.domain.store.mapper.StoreMapper;
 import com.deliveryinsider.store.domain.store.request.StoreUpdateRequest;
 import com.deliveryinsider.store.domain.store.response.StoreResponse;
+import com.deliveryinsider.store.global.error.BusinessException;
+import com.deliveryinsider.store.global.error.StoreErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,20 +19,16 @@ public class StoreService {
 
     @Transactional(readOnly = true)
     public StoreResponse findMyStore(Long userId) {
-        Store store = storeMapper.findByUserId(userId);
-        if (store == null) {
-            throw new RuntimeException("매장을 찾을 수 없습니다.");
-        }
+        Store store = Optional.ofNullable(storeMapper.findByUserId(userId))
+            .orElseThrow(() -> new BusinessException(StoreErrorCode.STORE_NOT_FOUND));
         return toStoreResponse(store);
     }
 
     @Transactional(rollbackFor = Exception.class)
     public StoreResponse update(Long userId, StoreUpdateRequest request) {
-        Store currentStore = storeMapper.findByUserId(userId);
 
-        if (currentStore == null) {
-            throw new RuntimeException("수정할 매장이 없습니다.");
-        }
+        Store currentStore = Optional.ofNullable(storeMapper.findByUserId(userId))
+            .orElseThrow(() -> new BusinessException(StoreErrorCode.STORE_NOT_FOUND));
 
         Store updateStore = Store.builder()
                 .id(currentStore.getId())
@@ -48,7 +48,7 @@ public class StoreService {
         int result = storeMapper.update(updateStore);
 
         if (result != 1) {
-            throw new RuntimeException("매장 수정 중 문제가 발생했습니다.");
+            throw new BusinessException(StoreErrorCode.IN_EDT_STORE_ERROR);
         }
 
         Store updatedStore = storeMapper.findByUserId(userId);

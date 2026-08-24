@@ -1,7 +1,8 @@
 package com.deliveryinsider.store.domain.menu.response;
 
+import com.deliveryinsider.store.domain.menu.enums.MenuStatus;
 import lombok.Builder;
-import java.math.BigDecimal;
+
 import java.time.LocalDateTime;
 
 @Builder
@@ -13,9 +14,7 @@ public record MenuResponse(
         Integer packagingFee,
         Integer expectedCookingTime,
         Integer batchCapacity,
-        String menuStatus,
-        Integer expectedMargin,
-        BigDecimal expectedMarginRate,
+        MenuStatus menuStatus,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {

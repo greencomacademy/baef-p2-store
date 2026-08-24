@@ -1,9 +1,11 @@
 package com.deliveryinsider.store.domain.menu.request;
 
+import com.deliveryinsider.store.domain.menu.enums.MenuStatus;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import com.deliveryinsider.store.domain.menu.enums.MenuStatus;
 
 public record MenuUpdateRequest(
 
@@ -45,7 +47,9 @@ public record MenuUpdateRequest(
                 value = 1,
                 message = "동시 조리 가능 수량은 1개 이상이어야 합니다."
         )
-        Integer batchCapacity
+        Integer batchCapacity,
+
+        MenuStatus menuStatus
 
 ) {
 
@@ -58,6 +62,8 @@ public record MenuUpdateRequest(
                 || menuCost != null
                 || packagingFee != null
                 || expectedCookingTime != null
-                || batchCapacity != null;
+                || batchCapacity != null
+                || menuStatus != null;
+        // enum status 받는걸 추가해주어라.
     }
 }

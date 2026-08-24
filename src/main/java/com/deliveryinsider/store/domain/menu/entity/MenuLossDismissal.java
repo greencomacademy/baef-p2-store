@@ -25,4 +25,6 @@ public class MenuLossDismissal {
     
     // 언제까지 숨길 것인지 (예: 7일 후)
     private LocalDateTime hideUntil;
+
+    private LocalDateTime restoredAt;
 }

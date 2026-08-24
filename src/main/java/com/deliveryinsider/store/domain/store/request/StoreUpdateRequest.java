@@ -15,7 +15,7 @@ public record StoreUpdateRequest(
         )
         String storeName,
         
-        @Size(max = 20, message = "전화번호는 20자 이하여야 합니다.")
+        @Size(max = 30, message = "전화번호는 20자 이하여야 합니다.")
         String phone,
 
 

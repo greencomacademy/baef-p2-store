@@ -1,5 +1,6 @@
 package com.deliveryinsider.store.domain.menu.entity;
 
+import com.deliveryinsider.store.domain.menu.enums.MenuStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,7 +38,7 @@ public class Menu {
     // 한 번에 조리 가능한 수량
     private Integer batchCapacity;
 
-    private String menuStatus;
+    private MenuStatus menuStatus;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
