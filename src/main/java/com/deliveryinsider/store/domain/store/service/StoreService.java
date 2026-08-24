@@ -48,7 +48,7 @@ public class StoreService {
         int result = storeMapper.update(updateStore);
 
         if (result != 1) {
-            throw new RuntimeException("매장 수정 중 문제가 발생했습니다.");
+            throw new BusinessException(StoreErrorCode.IN_EDT_STORE_ERROR);
         }
 
         Store updatedStore = storeMapper.findByUserId(userId);
