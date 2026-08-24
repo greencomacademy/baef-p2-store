@@ -62,6 +62,8 @@ public record MenuUpdateRequest(
                 || menuCost != null
                 || packagingFee != null
                 || expectedCookingTime != null
-                || batchCapacity != null;
+                || batchCapacity != null
+                || menuStatus != null;
+        // enum status 받는걸 추가해주어라.
     }
 }

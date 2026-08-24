@@ -116,17 +116,22 @@
             store_id,
             menu_id,
             dismissed_at,
-            hide_until
+            hide_until,
+            created_at,
+            updated_at
         ) VALUES (
             #{storeId},
             #{menuId},
             NOW(),
-            #{hideUntil}
+            #{hideUntil},
+            NOW(),
+            NOW()
         )
         ON DUPLICATE KEY UPDATE
-            hide_until = VALUES(hide_until),
+            hide_until = #{hideUntil},
             dismissed_at = NOW(),
-            restored_at = NULL
+            restored_at = NULL,
+            updated_at = NOW()
     </insert>
 
     <select id="findLossDismissalByStoreIdAndMenuId" resultMap="menuLossDismissalResultMap">
@@ -135,6 +140,8 @@
         FROM menu_loss_dismissals
         WHERE store_id = #{storeId}
           AND menu_id = #{menuId}
+        ORDER BY id DESC
+        LIMIT 1
     </select>
 
     <update id="restoreLossDismissal">

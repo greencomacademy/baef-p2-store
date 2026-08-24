@@ -12,6 +12,7 @@ import com.deliveryinsider.store.domain.menu.response.MenuLossDismissalResponse;
 import com.deliveryinsider.store.domain.store.entity.Store;
 import com.deliveryinsider.store.domain.store.mapper.StoreMapper;
 import com.deliveryinsider.store.global.error.BusinessException;
+import com.deliveryinsider.store.global.error.MenuErrorCode;
 import com.deliveryinsider.store.global.error.StoreErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,12 +47,12 @@ public class MenuService {
         int result = menuMapper.save(menu);
 
         if (result != 1) {
-            throw new RuntimeException("메뉴 등록 중 문제가 발생했습니다.");
+            throw new BusinessException(MenuErrorCode.MENU_REGIST_ERROR);
         }
 
         Menu savedMenu = menuMapper.findByIdAndStoreId(menu.getId(), store.getId());
         if (savedMenu == null) {
-            throw new RuntimeException("등록된 메뉴를 조회할 수 없습니다.");
+            throw new BusinessException(MenuErrorCode.MENU_NOT_FOUND);
         }
 
         return toMenuResponse(savedMenu);
@@ -73,7 +74,7 @@ public class MenuService {
         Store store = getActiveStore(userId);
 
         Menu menu = Optional.ofNullable(menuMapper.findByIdAndStoreId(menuId, store.getId()))
-            .orElseThrow(() -> new BusinessException(StoreErrorCode.MENU_NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(MenuErrorCode.MENU_NOT_FOUND));
 
         return toMenuResponse(menu);
     }
@@ -83,7 +84,7 @@ public class MenuService {
         Store store = getActiveStore(userId);
 
         Menu currentMenu = Optional.ofNullable(menuMapper.findByIdAndStoreId(menuId, store.getId()))
-            .orElseThrow(() -> new BusinessException(StoreErrorCode.MENU_NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(MenuErrorCode.MENU_NOT_FOUND));
 
         Menu updateMenu = Menu.builder()
                 .id(currentMenu.getId())
@@ -100,14 +101,14 @@ public class MenuService {
         int result = menuMapper.update(updateMenu);
 
         if (result != 1) {
-            throw new BusinessException(StoreErrorCode.MENU_NOT_FOUND);
+            throw new BusinessException(MenuErrorCode.MENU_NOT_FOUND);
         }
 
         menuMapper.restoreLossDismissal(store.getId(), menuId);
 
         Menu updatedMenu = menuMapper.findByIdAndStoreId(menuId, store.getId());
         if (updatedMenu == null) {
-            throw new RuntimeException("수정된 메뉴를 조회할 수 없습니다.");
+            throw new BusinessException(MenuErrorCode.MENU_NOT_FOUND);
         }
 
         return toMenuResponse(updatedMenu);
@@ -120,7 +121,7 @@ public class MenuService {
         int result = menuMapper.softDelete(menuId, store.getId());
 
         if (result != 1) {
-            throw new BusinessException(StoreErrorCode.MENU_NOT_FOUND);
+            throw new BusinessException(MenuErrorCode.MENU_NOT_FOUND);
         }
     }
 
@@ -139,7 +140,7 @@ public class MenuService {
         Store store = getActiveStore(userId);
 
         Menu menu = Optional.ofNullable(menuMapper.findByIdAndStoreId(menuId, store.getId()))
-            .orElseThrow(() -> new BusinessException(StoreErrorCode.MENU_NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(MenuErrorCode.MENU_NOT_FOUND));
 
         int hideDays = (dismissReq != null && dismissReq.hideDays() != null) ? dismissReq.hideDays() : 7;
         LocalDateTime hideUntil = LocalDateTime.now().plusDays(hideDays);
@@ -154,7 +155,7 @@ public class MenuService {
         MenuLossDismissal savedDismissal = menuMapper.findLossDismissalByStoreIdAndMenuId(store.getId(), menuId);
 
         if (savedDismissal == null) {
-            throw new RuntimeException("숨은 손실 메뉴 확인 완료 저장 후 조회에 실패했습니다.");
+            throw new BusinessException(MenuErrorCode.MENU_LOSS_DISMISSAL_NOT_FOUND);
         }
 
         return toMenuLossDismissalResponse(savedDismissal);
@@ -165,7 +166,7 @@ public class MenuService {
         Store store = getActiveStore(userId);
 
         Menu menu = Optional.ofNullable(menuMapper.findByIdAndStoreId(menuId, store.getId()))
-            .orElseThrow(() -> new BusinessException(StoreErrorCode.MENU_NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(MenuErrorCode.MENU_NOT_FOUND));
 
         menuMapper.restoreLossDismissal(store.getId(), menuId);
     }
