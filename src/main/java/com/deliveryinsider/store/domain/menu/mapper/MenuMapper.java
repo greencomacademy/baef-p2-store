@@ -27,4 +27,5 @@ public interface MenuMapper {
 
     void restoreLossDismissal(@Param("storeId") Long storeId, @Param("menuId") Long menuId);
 
+    List<Menu> findAllOrderableByStoreIdAndIds(@Param("storeId") Long storeId, @Param("menuIds") List<Long> menuIds);
 }

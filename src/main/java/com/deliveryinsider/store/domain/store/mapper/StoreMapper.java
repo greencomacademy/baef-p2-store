@@ -8,4 +8,5 @@ import org.apache.ibatis.annotations.Param;
 public interface StoreMapper {
     Store findByUserId(@Param("userId") Long userId);
     int update(Store store);
+    Store findById(@Param("id") Long id);
 }

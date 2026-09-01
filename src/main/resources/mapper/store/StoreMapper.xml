@@ -5,49 +5,95 @@
 
 <mapper namespace="com.deliveryinsider.store.domain.store.mapper.StoreMapper">
 
-    <resultMap id="storeResultMap" type="com.deliveryinsider.store.domain.store.entity.Store">
+    <resultMap
+            id="storeResultMap"
+            type="com.deliveryinsider.store.domain.store.entity.Store">
+
         <id column="id" property="id" />
+
         <result column="user_id" property="userId" />
         <result column="store_name" property="storeName" />
-        <result column="business_registration_number" property="businessRegistrationNumber" />
-        <result column="business_verification_id" property="businessVerificationId" />
+        <result column="business_registration_number"
+                property="businessRegistrationNumber" />
+        <result column="business_verification_id"
+                property="businessVerificationId" />
+
         <result column="phone" property="phone" />
         <result column="operation_status" property="operationStatus" />
+
         <result column="address" property="address" />
         <result column="address_detail" property="addressDetail" />
+
         <result column="industry_type" property="industryType" />
+
         <result column="kitchen_capacity" property="kitchenCapacity" />
         <result column="minimum_order_amount" property="minimumOrderAmount" />
+
         <result column="open_time" property="openTime" />
         <result column="close_time" property="closeTime" />
+
+        <result column="deletion_request_id"
+                property="deletionRequestId" />
+
+        <result column="deletion_requested_at"
+                property="deletionRequestedAt" />
+
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
         <result column="deleted_at" property="deletedAt" />
+
     </resultMap>
 
     <!-- 로그인한 유저의 활성 매장 조회 -->
     <select id="findByUserId" resultMap="storeResultMap">
         SELECT
-        id,
-        user_id,
-        store_name,
-        phone,
-        business_registration_number,
-        business_verification_id,
-        operation_status,
-        address,
-        address_detail,
-        industry_type,
-        kitchen_capacity,
-        minimum_order_amount,
-        open_time,
-        close_time,
-        created_at,
-        updated_at,
-        deleted_at
+            id,
+            user_id,
+            store_name,
+            phone,
+            business_registration_number,
+            business_verification_id,
+            operation_status,
+            address,
+            address_detail,
+            industry_type,
+            kitchen_capacity,
+            minimum_order_amount,
+            open_time,
+            close_time,
+            deletion_request_id,
+            deletion_requested_at,
+            created_at,
+            updated_at,
+            deleted_at
         FROM stores
         WHERE user_id = #{userId}
-        AND deleted_at IS NULL
+          AND deleted_at IS NULL
+    </select>
+<!-- 스냅샷용   -->
+    <select id="findById" resultMap="storeResultMap">
+        SELECT
+            id,
+            user_id,
+            store_name,
+            phone,
+            business_registration_number,
+            business_verification_id,
+            operation_status,
+            address,
+            address_detail,
+            industry_type,
+            kitchen_capacity,
+            minimum_order_amount,
+            open_time,
+            close_time,
+            deletion_request_id,
+            deletion_requested_at,
+            created_at,
+            updated_at,
+            deleted_at
+        FROM stores
+        WHERE id = #{id}
     </select>
 
     <!-- 매장 부분 수정 -->

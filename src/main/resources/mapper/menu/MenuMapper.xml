@@ -150,5 +150,36 @@
         WHERE store_id = #{storeId}
           AND menu_id = #{menuId}
     </update>
+    <select
+            id="findAllOrderableByStoreIdAndIds"
+            resultMap="menuResultMap">
 
+        SELECT
+        id,
+        store_id,
+        menu_name,
+        menu_price,
+        menu_cost,
+        packaging_fee,
+        expected_cooking_time,
+        batch_capacity,
+        menu_status,
+        created_at,
+        updated_at,
+        deleted_at
+        FROM menus
+        WHERE store_id = #{storeId}
+        AND menu_status = 'ACTIVE'
+        AND deleted_at IS NULL
+        AND id IN
+        <foreach
+                collection="menuIds"
+                item="menuId"
+                open="("
+                separator=","
+                close=")">
+            #{menuId}
+        </foreach>
+
+    </select>
 </mapper>
