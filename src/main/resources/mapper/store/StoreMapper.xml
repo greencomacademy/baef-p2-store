@@ -96,6 +96,58 @@
         WHERE id = #{id}
     </select>
 
+
+    <select
+            id="existsByBusinessRegistrationNumber"
+            resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM stores
+            WHERE business_registration_number = #{businessRegistrationNumber}
+              AND deleted_at IS NULL
+        )
+    </select>
+
+    <insert
+            id="insert"
+            parameterType="com.deliveryinsider.store.domain.store.entity.Store"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO stores (
+            user_id,
+            store_name,
+            phone,
+            business_registration_number,
+            business_verification_id,
+            operation_status,
+            address,
+            address_detail,
+            industry_type,
+            kitchen_capacity,
+            minimum_order_amount,
+            open_time,
+            close_time,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{userId},
+            #{storeName},
+            #{phone},
+            #{businessRegistrationNumber},
+            #{businessVerificationId},
+            #{operationStatus},
+            #{address},
+            #{addressDetail},
+            #{industryType},
+            #{kitchenCapacity},
+            #{minimumOrderAmount},
+            #{openTime},
+            #{closeTime},
+            NOW(6),
+            NOW(6)
+        )
+    </insert>
+
     <!-- 매장 부분 수정 -->
     <update id="update" parameterType="com.deliveryinsider.store.domain.store.entity.Store">
         UPDATE stores

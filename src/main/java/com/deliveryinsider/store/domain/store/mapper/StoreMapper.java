@@ -6,7 +6,20 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface StoreMapper {
-    Store findByUserId(@Param("userId") Long userId);
+
+    Store findByUserId(
+            @Param("userId") Long userId
+    );
+
+    Store findById(
+            @Param("id") Long id
+    );
+
+    boolean existsByBusinessRegistrationNumber(
+            @Param("businessRegistrationNumber") String businessRegistrationNumber
+    );
+
+    int insert(Store store);
+
     int update(Store store);
-    Store findById(@Param("id") Long id);
 }

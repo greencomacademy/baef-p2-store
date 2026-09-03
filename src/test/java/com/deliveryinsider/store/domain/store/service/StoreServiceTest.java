@@ -144,15 +144,15 @@ class StoreServiceTest {
         when(storeMapper.update(any(Store.class))).thenReturn(0);
 
         // 3. [When] & [Then] 실행 및 예외 검증
-        // 0이 반환되었으므로 서비스 로직 내부에서 IN_EDT_STORE_ERROR 예외를 던져야 합니다.
+        // 0이 반환되었으므로 서비스 로직 내부에서 IN_EDIT_STORE_ERROR 예외를 던져야 합니다.
         BusinessException exception = assertThrows(
                 BusinessException.class,
                 () -> storeService.update(userId, request) // 실제 서비스 로직 실행
         );
         
         // 4. 예외 코드 검증
-        // 터진 예외가 정확히 우리가 의도한 IN_EDT_STORE_ERROR 인지 확인합니다.
-        assertEquals(StoreErrorCode.IN_EDT_STORE_ERROR, exception.errorCode());
+        // 터진 예외가 정확히 우리가 의도한 IN_EDIT_STORE_ERROR 인지 확인합니다.
+        assertEquals(StoreErrorCode.IN_EDIT_STORE_ERROR, exception.errorCode());
     }
 
     @Test
