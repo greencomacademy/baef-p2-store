@@ -43,6 +43,8 @@ class MenuServiceTest {
 
     @Mock
     private StoreMapper storeMapper;
+    @Mock
+    private com.deliveryinsider.store.domain.catalog.CatalogEventWriter catalogEvents;
 
     @InjectMocks
     private MenuService menuService;
@@ -177,12 +179,8 @@ class MenuServiceTest {
                 () -> menuService.findOne(userId, menuId)
         );
 
-        // assertEquals(기대한 값,실제로 나온 값). 168번 라인은, 테스트실패 테스트용 라인
-        // 예상한 값은, STORE_NOT_FOUND 인데 , 실제 나온값은 <MENU_NOT_FOUND> 이라서 테스트 실패
-        assertEquals(StoreErrorCode.STORE_NOT_FOUND, exception.errorCode());
-
-
-        //assertEquals(MenuErrorCode.MENU_NOT_FOUND, exception.errorCode());
+        // Store는 존재하지만 해당 Store의 메뉴가 없으므로 MENU_NOT_FOUND가 현재 계약이다.
+        assertEquals(MenuErrorCode.MENU_NOT_FOUND, exception.errorCode());
     }
 
     // ==========================================

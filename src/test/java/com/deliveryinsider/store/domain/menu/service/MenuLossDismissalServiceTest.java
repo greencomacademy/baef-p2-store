@@ -37,6 +37,8 @@ class MenuLossDismissalServiceTest {
 
     @Mock // 가짜 StoreMapper 생성
     private StoreMapper storeMapper;
+    @Mock
+    private com.deliveryinsider.store.domain.catalog.CatalogEventWriter catalogEvents;
 
     @InjectMocks // 가짜 매퍼들을 주입받아 동작하는 실제 MenuService 객체 (LossDismissal 로직도 여기에 포함됨)
     private MenuService menuService; 

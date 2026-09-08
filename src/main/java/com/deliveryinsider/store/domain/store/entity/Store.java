@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Store {
     private Long id;
+    private Long eventVersion;
     private Long userId;
     private String storeName;
     private String phone;

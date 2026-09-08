@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 public class Menu {
 
     private Long id;
+    private Long eventVersion;
 
     // 해당 메뉴를 소유한 매장 PK
     private Long storeId;

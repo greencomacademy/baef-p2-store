@@ -24,6 +24,8 @@ class StoreServiceTest {
 
     @Mock // DB와 통신하는 척하는 가짜 매퍼 객체 생성
     private StoreMapper storeMapper;
+    @Mock
+    private com.deliveryinsider.store.domain.catalog.CatalogEventWriter catalogEvents;
 
     @InjectMocks // 가짜 매퍼 객체를 주입받아서 동작하는 진짜 서비스 객체 생성
     private StoreService storeService;

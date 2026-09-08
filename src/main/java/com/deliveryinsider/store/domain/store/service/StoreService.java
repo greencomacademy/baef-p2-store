@@ -25,6 +25,7 @@ public class StoreService {
     private static final String CONTINUING_BUSINESS_CODE = "01";
 
     private final StoreMapper storeMapper;
+    private final com.deliveryinsider.store.domain.catalog.CatalogEventWriter catalogEvents;
     private final BusinessVerificationMapper businessVerificationMapper;
 
     @Transactional(readOnly = true)
@@ -159,6 +160,7 @@ public class StoreService {
                         )
                 );
 
+        catalogEvents.storeChanged(createdStore.getId(), "STORE_CREATED");
         return toStoreResponse(createdStore);
     }
 
@@ -201,6 +203,7 @@ public class StoreService {
 
         Store updatedStore = storeMapper.findByUserId(userId);
 
+        catalogEvents.storeChanged(updatedStore.getId(), "STORE_UPDATED");
         return toStoreResponse(updatedStore);
     }
 

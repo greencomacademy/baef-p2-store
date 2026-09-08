@@ -27,6 +27,7 @@ import java.util.Optional;
 public class MenuService {
 
     private final MenuMapper menuMapper;
+    private final com.deliveryinsider.store.domain.catalog.CatalogEventWriter catalogEvents;
     private final StoreMapper storeMapper;
 
     @Transactional(rollbackFor = Exception.class)
@@ -55,6 +56,7 @@ public class MenuService {
             throw new BusinessException(MenuErrorCode.MENU_NOT_FOUND);
         }
 
+        catalogEvents.menuChanged(savedMenu.getId(), store.getId(), "MENU_CREATED");
         return toMenuResponse(savedMenu);
     }
 
@@ -111,6 +113,7 @@ public class MenuService {
             throw new BusinessException(MenuErrorCode.MENU_NOT_FOUND);
         }
 
+        catalogEvents.menuChanged(updatedMenu.getId(), store.getId(), "MENU_UPDATED");
         return toMenuResponse(updatedMenu);
     }
 
@@ -123,6 +126,7 @@ public class MenuService {
         if (result != 1) {
             throw new BusinessException(MenuErrorCode.MENU_NOT_FOUND);
         }
+        catalogEvents.menuChanged(menuId, store.getId(), "MENU_DELETED");
     }
 
     @Transactional(readOnly = true)
