@@ -11,6 +11,14 @@ public interface BusinessVerificationMapper {
 
     int insert(BusinessVerification verification);
 
+    BusinessVerification findReusableVerified(
+            @Param("userId") Long userId,
+            @Param("businessRegistrationNumber") String businessRegistrationNumber,
+            @Param("representativeName") String representativeName,
+            @Param("openingDate") String openingDate,
+            @Param("now") LocalDateTime now
+    );
+
     BusinessVerification findByIdForUpdate(
             @Param("id") String id
     );

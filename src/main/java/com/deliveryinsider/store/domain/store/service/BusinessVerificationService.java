@@ -58,10 +58,30 @@ public class BusinessVerificationService {
                 request.openingDate()
         );
 
+        String representativeName =
+                request.representativeName().trim();
+
+        LocalDateTime now = LocalDateTime.now(
+                ZoneOffset.UTC
+        );
+
+        BusinessVerification reusable =
+                businessVerificationMapper.findReusableVerified(
+                        userId,
+                        businessRegistrationNumber,
+                        representativeName,
+                        openingDate,
+                        now
+                );
+
+        if (reusable != null) {
+            return toResponse(reusable);
+        }
+
         NtsBusinessVerificationResult verificationResult =
                 ntsBusinessClient.verify(
                         businessRegistrationNumber,
-                        request.representativeName().trim(),
+                        representativeName,
                         openingDate
                 );
 
@@ -89,7 +109,7 @@ public class BusinessVerificationService {
                 .id(verificationId)
                 .userId(userId)
                 .businessRegistrationNumber(businessRegistrationNumber)
-                .representativeName(request.representativeName().trim())
+                .representativeName(representativeName)
                 .openingDate(openingDate)
                 .businessStatusCode(verificationResult.businessStatusCode())
                 .businessStatusName(verificationResult.businessStatusName())
@@ -107,13 +127,19 @@ public class BusinessVerificationService {
             );
         }
 
+        return toResponse(verification);
+    }
+
+    private BusinessVerificationResponse toResponse(
+            BusinessVerification verification
+    ) {
         return new BusinessVerificationResponse(
-                verificationId,
-                businessRegistrationNumber,
-                verificationResult.businessStatusCode(),
-                verificationResult.businessStatusName(),
-                verifiedAt,
-                expiresAt
+                verification.getId(),
+                verification.getBusinessRegistrationNumber(),
+                verification.getBusinessStatusCode(),
+                verification.getBusinessStatusName(),
+                verification.getVerifiedAt(),
+                verification.getExpiresAt()
         );
     }
 
