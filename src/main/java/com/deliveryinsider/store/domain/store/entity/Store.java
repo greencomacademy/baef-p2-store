@@ -26,7 +26,6 @@ public class Store {
     private String address;
     private String addressDetail;
     private String industryType;
-    private Integer kitchenCapacity;
     private Integer minimumOrderAmount;
     private String openTime;
     private String closeTime;

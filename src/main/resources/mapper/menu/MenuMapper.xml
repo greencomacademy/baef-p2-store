@@ -14,7 +14,6 @@
         <result column="menu_cost" property="menuCost" />
         <result column="packaging_fee" property="packagingFee" />
         <result column="expected_cooking_time" property="expectedCookingTime" />
-        <result column="batch_capacity" property="batchCapacity" />
         <result column="menu_status" property="menuStatus" />
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
@@ -38,7 +37,6 @@
             menu_cost,
             packaging_fee,
             expected_cooking_time,
-            batch_capacity,
             menu_status,
             created_at,
             updated_at
@@ -49,7 +47,6 @@
             #{menuCost},
             #{packagingFee},
             #{expectedCookingTime},
-            #{batchCapacity},
             #{menuStatus},
             NOW(),
             NOW()
@@ -59,7 +56,7 @@
     <select id="findByIdAndStoreId" resultMap="menuResultMap">
         SELECT 
             id, event_version, store_id, menu_name, menu_price, menu_cost,
-            packaging_fee, expected_cooking_time, batch_capacity, 
+            packaging_fee, expected_cooking_time,
             menu_status, created_at, updated_at, deleted_at
         FROM menus
         WHERE id = #{id}
@@ -70,7 +67,7 @@
     <select id="findAllByStoreId" resultMap="menuResultMap">
         SELECT 
             id, event_version, store_id, menu_name, menu_price, menu_cost,
-            packaging_fee, expected_cooking_time, batch_capacity, 
+            packaging_fee, expected_cooking_time,
             menu_status, created_at, updated_at, deleted_at
         FROM menus
         WHERE store_id = #{storeId}
@@ -85,7 +82,6 @@
             <if test="menuCost != null">menu_cost = #{menuCost},</if>
             <if test="packagingFee != null">packaging_fee = #{packagingFee},</if>
             <if test="expectedCookingTime != null">expected_cooking_time = #{expectedCookingTime},</if>
-            <if test="batchCapacity != null">batch_capacity = #{batchCapacity},</if>
             <if test="menuStatus != null">menu_status = #{menuStatus},</if>
             event_version = event_version + 1, updated_at = NOW()
         </set>
@@ -163,7 +159,6 @@
         menu_cost,
         packaging_fee,
         expected_cooking_time,
-        batch_capacity,
         menu_status,
         created_at,
         updated_at,

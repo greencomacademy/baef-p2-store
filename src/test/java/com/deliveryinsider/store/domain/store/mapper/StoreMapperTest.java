@@ -65,7 +65,6 @@ class StoreMapperTest {
                 .address(store.getAddress())
                 .addressDetail(store.getAddressDetail())
                 .industryType(store.getIndustryType())
-                .kitchenCapacity(store.getKitchenCapacity())
                 .minimumOrderAmount(store.getMinimumOrderAmount())
                 .openTime(store.getOpenTime())
                 .closeTime(store.getCloseTime())

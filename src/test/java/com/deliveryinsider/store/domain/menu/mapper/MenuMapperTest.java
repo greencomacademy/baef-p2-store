@@ -39,7 +39,6 @@ class MenuMapperTest {
                 .menuCost(5000)
                 .packagingFee(500) // DB 제약조건(Not Null)을 통과하기 위해 추가
                 .expectedCookingTime(15) // 조리시간 15분
-                .batchCapacity(3) // 한 번에 3인분 조리 가능
                 .menuStatus(MenuStatus.ACTIVE)
                 .build();
         
@@ -90,7 +89,6 @@ class MenuMapperTest {
                 .menuCost(1000)
                 .packagingFee(100)
                 .expectedCookingTime(5)
-                .batchCapacity(10)
                 .menuStatus(MenuStatus.ACTIVE)
                 .build();
         menuMapper.save(menu);

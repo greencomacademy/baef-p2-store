@@ -14,7 +14,11 @@ public record StoreCreateRequest(
         @Size(max = 100, message = "매장명은 100자 이하여야 합니다.")
         String storeName,
 
-        @Size(max = 30, message = "전화번호는 30자 이하여야 합니다.")
+        @Size(max = 20, message = "전화번호는 20자 이하여야 합니다.")
+        @Pattern(
+                regexp = "^$|^(?:0\\d{1,3}-?\\d{3,4}-?\\d{4}|1\\d{3}-?\\d{4})$",
+                message = "전화번호 형식을 확인해 주세요."
+        )
         String phone,
 
         @NotBlank(message = "주소를 입력해 주세요.")
@@ -27,9 +31,6 @@ public record StoreCreateRequest(
         @NotBlank(message = "업종을 입력해 주세요.")
         @Size(max = 50, message = "업종은 50자 이하여야 합니다.")
         String industryType,
-
-        @Min(value = 1, message = "주방 처리량은 1 이상이어야 합니다.")
-        Integer kitchenCapacity,
 
         @Min(value = 0, message = "최소주문금액은 0 이상이어야 합니다.")
         Integer minimumOrderAmount,

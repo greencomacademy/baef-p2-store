@@ -91,8 +91,7 @@ public class StoreOrderSnapshotService {
             menu.getMenuPrice(),
             menu.getMenuCost(),
             menu.getPackagingFee(),
-            menu.getExpectedCookingTime(),
-            menu.getBatchCapacity()
+            menu.getExpectedCookingTime()
         );
     }
 }

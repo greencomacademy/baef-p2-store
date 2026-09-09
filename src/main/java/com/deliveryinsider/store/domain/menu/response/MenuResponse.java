@@ -13,7 +13,6 @@ public record MenuResponse(
         Integer menuCost,
         Integer packagingFee,
         Integer expectedCookingTime,
-        Integer batchCapacity,
         MenuStatus menuStatus,
         LocalDateTime createdAt,
         LocalDateTime updatedAt

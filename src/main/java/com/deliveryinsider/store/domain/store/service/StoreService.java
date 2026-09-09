@@ -118,10 +118,6 @@ public class StoreService {
                 .address(request.address().trim())
                 .addressDetail(blankToNull(request.addressDetail()))
                 .industryType(request.industryType().trim())
-                .kitchenCapacity(
-                        Optional.ofNullable(request.kitchenCapacity())
-                                .orElse(1)
-                )
                 .minimumOrderAmount(
                         Optional.ofNullable(request.minimumOrderAmount())
                                 .orElse(0)
@@ -186,7 +182,6 @@ public class StoreService {
                 .address(request.address())
                 .addressDetail(request.addressDetail())
                 .industryType(request.industryType())
-                .kitchenCapacity(request.kitchenCapacity())
                 .minimumOrderAmount(request.minimumOrderAmount())
                 .openTime(request.openTime())
                 .closeTime(request.closeTime())
@@ -222,7 +217,6 @@ public class StoreService {
                 .address(store.getAddress())
                 .addressDetail(store.getAddressDetail())
                 .industryType(store.getIndustryType())
-                .kitchenCapacity(store.getKitchenCapacity())
                 .minimumOrderAmount(store.getMinimumOrderAmount())
                 .openTime(store.getOpenTime())
                 .closeTime(store.getCloseTime())

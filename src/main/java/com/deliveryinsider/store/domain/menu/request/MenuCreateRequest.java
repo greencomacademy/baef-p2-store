@@ -26,11 +26,7 @@ public record MenuCreateRequest(
 
         @NotNull(message = "예상 조리 시간은 필수 입니다.")
         @Min(value = 1, message = "예상 조리시간은 1분 이상이어야 합니다.")
-        Integer expectedCookingTime,
-
-        @NotNull(message = "배치 용량은 필수 입니다.")
-        @Min(value = 1, message = "동시 조리 가능 수량은 1개 이상이어야 합니다.")
-        Integer batchCapacity
+        Integer expectedCookingTime
 
 ) {
 }

@@ -15,7 +15,11 @@ public record StoreUpdateRequest(
         )
         String storeName,
         
-        @Size(max = 30, message = "전화번호는 20자 이하여야 합니다.")
+        @Size(max = 20, message = "전화번호는 20자 이하여야 합니다.")
+        @Pattern(
+                regexp = "^$|^(?:0\\d{1,3}-?\\d{3,4}-?\\d{4}|1\\d{3}-?\\d{4})$",
+                message = "전화번호 형식을 확인해 주세요."
+        )
         String phone,
 
 
@@ -37,9 +41,6 @@ public record StoreUpdateRequest(
         )
         String industryType,
 
-        @Min(value = 1, message = "주방 처리량은 1 이상이어야 합니다.")
-        Integer kitchenCapacity,
-
         @Min(value = 0, message = "최소주문금액은 0 이상이어야 합니다.")
         Integer minimumOrderAmount,
 
@@ -58,7 +59,6 @@ public record StoreUpdateRequest(
                 || address != null
                 || addressDetail != null
                 || industryType != null
-                || kitchenCapacity != null
                 || minimumOrderAmount != null
                 || openTime != null
                 || closeTime != null

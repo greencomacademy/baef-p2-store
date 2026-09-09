@@ -17,7 +17,6 @@ public record StoreResponse(
         String address,
         String addressDetail,
         String industryType,
-        Integer kitchenCapacity,
         Integer minimumOrderAmount,
         String openTime,
         String closeTime,

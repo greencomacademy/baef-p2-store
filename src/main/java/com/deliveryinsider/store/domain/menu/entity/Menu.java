@@ -36,9 +36,6 @@ public class Menu {
     // 예상 조리시간 (분 단위)
     private Integer expectedCookingTime;
 
-    // 한 번에 조리 가능한 수량
-    private Integer batchCapacity;
-
     private MenuStatus menuStatus;
 
     private LocalDateTime createdAt;

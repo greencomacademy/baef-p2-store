@@ -13,8 +13,7 @@ public record StoreOrderSnapshotResponse(
         Integer menuPrice,
         Integer menuCost,
         Integer packagingCost,
-        Integer expectedCookingTime,
-        Integer batchCapacity
+        Integer expectedCookingTime
     ) {
     }
 }

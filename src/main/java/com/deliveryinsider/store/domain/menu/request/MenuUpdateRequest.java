@@ -43,12 +43,6 @@ public record MenuUpdateRequest(
         )
         Integer expectedCookingTime,
 
-        @Min(
-                value = 1,
-                message = "동시 조리 가능 수량은 1개 이상이어야 합니다."
-        )
-        Integer batchCapacity,
-
         MenuStatus menuStatus
 
 ) {
@@ -62,7 +56,6 @@ public record MenuUpdateRequest(
                 || menuCost != null
                 || packagingFee != null
                 || expectedCookingTime != null
-                || batchCapacity != null
                 || menuStatus != null;
         // enum status 받는걸 추가해주어라.
     }

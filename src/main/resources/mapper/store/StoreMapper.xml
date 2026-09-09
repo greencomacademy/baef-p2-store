@@ -26,8 +26,6 @@
         <result column="address_detail" property="addressDetail" />
 
         <result column="industry_type" property="industryType" />
-
-        <result column="kitchen_capacity" property="kitchenCapacity" />
         <result column="minimum_order_amount" property="minimumOrderAmount" />
 
         <result column="open_time" property="openTime" />
@@ -58,7 +56,6 @@
             address,
             address_detail,
             industry_type,
-            kitchen_capacity,
             minimum_order_amount,
             open_time,
             close_time,
@@ -84,7 +81,6 @@
             address,
             address_detail,
             industry_type,
-            kitchen_capacity,
             minimum_order_amount,
             open_time,
             close_time,
@@ -124,7 +120,6 @@
             address,
             address_detail,
             industry_type,
-            kitchen_capacity,
             minimum_order_amount,
             open_time,
             close_time,
@@ -140,7 +135,6 @@
             #{address},
             #{addressDetail},
             #{industryType},
-            #{kitchenCapacity},
             #{minimumOrderAmount},
             #{openTime},
             #{closeTime},
@@ -159,7 +153,6 @@
             <if test="address != null">address = #{address},</if>
             <if test="addressDetail != null">address_detail = #{addressDetail},</if>
             <if test="industryType != null">industry_type = #{industryType},</if>
-            <if test="kitchenCapacity != null">kitchen_capacity = #{kitchenCapacity},</if>
             <if test="minimumOrderAmount != null">minimum_order_amount = #{minimumOrderAmount},</if>
             <if test="openTime != null">open_time = #{openTime},</if>
             <if test="closeTime != null">close_time = #{closeTime},</if>

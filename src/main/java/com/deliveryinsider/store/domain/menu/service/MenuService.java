@@ -4,6 +4,8 @@ import com.deliveryinsider.store.domain.menu.entity.Menu;
 import com.deliveryinsider.store.domain.menu.entity.MenuLossDismissal;
 import com.deliveryinsider.store.domain.menu.enums.MenuStatus;
 import com.deliveryinsider.store.domain.menu.mapper.MenuMapper;
+import com.deliveryinsider.store.domain.menu.mapper.InternalMenuCreationMapper;
+import com.deliveryinsider.store.domain.menu.request.InternalMenuCreateRequest;
 import com.deliveryinsider.store.domain.menu.request.MenuCreateRequest;
 import com.deliveryinsider.store.domain.menu.request.MenuLossDismissRequest;
 import com.deliveryinsider.store.domain.menu.request.MenuUpdateRequest;
@@ -27,6 +29,7 @@ import java.util.Optional;
 public class MenuService {
 
     private final MenuMapper menuMapper;
+    private final InternalMenuCreationMapper internalMenuCreationMapper;
     private final com.deliveryinsider.store.domain.catalog.CatalogEventWriter catalogEvents;
     private final StoreMapper storeMapper;
 
@@ -41,7 +44,6 @@ public class MenuService {
                 .menuCost(createReq.menuCost())
                 .packagingFee(createReq.packagingFee())
                 .expectedCookingTime(createReq.expectedCookingTime())
-                .batchCapacity(createReq.batchCapacity())
                 .menuStatus(MenuStatus.ACTIVE)
                 .build();
 
@@ -58,6 +60,56 @@ public class MenuService {
 
         catalogEvents.menuChanged(savedMenu.getId(), store.getId(), "MENU_CREATED");
         return toMenuResponse(savedMenu);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public MenuResponse createForPlatformMapping(
+        long storeId,
+        InternalMenuCreateRequest request
+    ) {
+        Store store = Optional.ofNullable(storeMapper.findById(storeId))
+            .filter(value -> value.getDeletedAt() == null)
+            .orElseThrow(() -> new BusinessException(StoreErrorCode.STORE_NOT_FOUND));
+
+        internalMenuCreationMapper.insertPending(
+            request.operationKey(),
+            storeId
+        );
+
+        Long existingMenuId = internalMenuCreationMapper.findMenuIdForUpdate(
+            request.operationKey(),
+            storeId
+        );
+        if (existingMenuId != null) {
+            Menu existing = Optional.ofNullable(
+                menuMapper.findByIdAndStoreId(existingMenuId, storeId)
+            ).orElseThrow(() -> new BusinessException(MenuErrorCode.MENU_NOT_FOUND));
+            return toMenuResponse(existing);
+        }
+
+        Menu menu = Menu.builder()
+            .storeId(store.getId())
+            .menuName(request.menuName().trim())
+            .menuPrice(request.menuPrice())
+            .menuCost(request.menuCost())
+            .packagingFee(request.packagingFee())
+            .expectedCookingTime(request.expectedCookingTime())
+            .menuStatus(MenuStatus.ACTIVE)
+            .build();
+        if (menuMapper.save(menu) != 1 || menu.getId() == null) {
+            throw new BusinessException(MenuErrorCode.MENU_REGIST_ERROR);
+        }
+        if (internalMenuCreationMapper.complete(
+            request.operationKey(), storeId, menu.getId()
+        ) != 1) {
+            throw new BusinessException(MenuErrorCode.MENU_REGIST_ERROR);
+        }
+
+        Menu saved = Optional.ofNullable(
+            menuMapper.findByIdAndStoreId(menu.getId(), storeId)
+        ).orElseThrow(() -> new BusinessException(MenuErrorCode.MENU_NOT_FOUND));
+        catalogEvents.menuChanged(saved.getId(), storeId, "MENU_CREATED");
+        return toMenuResponse(saved);
     }
 
     @Transactional(readOnly = true)
@@ -96,7 +148,6 @@ public class MenuService {
                 .menuCost(updateReq.menuCost())
                 .packagingFee(updateReq.packagingFee())
                 .expectedCookingTime(updateReq.expectedCookingTime())
-                .batchCapacity(updateReq.batchCapacity())
                 .menuStatus(updateReq.menuStatus() != null ? updateReq.menuStatus() : currentMenu.getMenuStatus())
                 .build();
 
@@ -188,7 +239,6 @@ public class MenuService {
                 .menuCost(menu.getMenuCost())
                 .packagingFee(menu.getPackagingFee())
                 .expectedCookingTime(menu.getExpectedCookingTime())
-                .batchCapacity(menu.getBatchCapacity())
                 .menuStatus(menu.getMenuStatus())
                 .createdAt(menu.getCreatedAt())
                 .updatedAt(menu.getUpdatedAt())
